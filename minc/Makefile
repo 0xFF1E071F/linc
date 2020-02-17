@@ -1,12 +1,17 @@
-PHONY: all list dump linkscript run 
+PHONY: all hard asm list dump linkscript run 
 
 all: 
-	#gcc -o minc main_old.c
 	gcc -nostdlib startup.s -o minc main.c
+
+hard:
+	gcc -Og -o minc -Wl,-Map=main_old.map main_old.c
+
+asm:
+	gcc -s -nostdlib -nodefaultlibs -nostartfiles -m32 -static main_asm.s -o minc
 
 list:
 	gcc -S -fverbose-asm -masm=intel main.c 
-	nm main.o > build.log
+	nm -n main.o > build.log
 	size main.o >> build.log
 	@echo "--- elf ---" >> build.log
 	nm minc >> build.log
